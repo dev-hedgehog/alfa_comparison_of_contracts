@@ -1,0 +1,108 @@
+<html>
+<head>
+	<title>Сравнение договоров</title>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="./bootstrap.min.css">
+
+	<style type="text/css">
+		textarea.mr {
+			
+			height: 500px;
+		}
+		#result-list, #result-list-2, #result-list-3 {
+			width: 100%;
+		}
+	</style>
+
+	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+
+</head>
+<body>
+	<div class="container">
+		<h1>Сравнение</h1>
+		<div class="row">
+			<div class="form-group col-sm">
+				<label for="decorated-list">Оформленные</label>
+				<textarea id="decorated-list" class="form-control mr"></textarea>
+			</div>
+			<div class="form-group col-sm">
+				<label for="paid-list">Оплаченные</label>
+				<textarea id="paid-list" class="form-control mr"></textarea>
+			</div>
+		</div>
+
+		<button class="btn btn-secondary" id="doEq">Сравнить</button>
+		<div class="row">
+			<div class="col-sm">
+				<br/>
+				<h4>Отсутствующие в оплаченных</h4>
+				<textarea id="result-list" class="alert alert-info"></textarea>
+				<h4>Присутствующие в оплаченных</h4>
+				<textarea id="result-list-2" class="alert alert-info"></textarea>
+				<h4>Оплаченные отсутствующие в списке оформленных</h4>
+				<textarea id="result-list-3" class="alert alert-info"></textarea>
+			</div>
+		</div>
+	</div>
+
+	<script type="text/javascript">
+
+		function resize() {
+			$('#result-list, #result-list-2, #result-list-3').each(function(o){
+			this.style.height = '1px';
+			this.style.height = this.scrollHeight+'px';	
+			})
+			
+			
+		};
+		document.getElementById("doEq").addEventListener("click", function() {
+			var decorated = document.getElementById("decorated-list").value,
+				decorated_list = decorated.split("\n"),
+				paid = document.getElementById("paid-list").value,
+				paid_list = paid.split("\n"),
+				result = '',
+				result2 = '',
+				result3 = '';
+				
+
+			for (var i=0; i<decorated_list.length;i++) {
+
+				var el = decorated_list[i].replace(/^[a-zA-Zа-яА-Я\s]*/gm, '');
+				if (el.replace(/\s*/, '').length == 0) {
+					continue;
+				}
+				var searching = new RegExp('^\\s*[a-zA-Zа-яА-Я]*'+el+'\\s*$', 'gm');
+				if (paid.match(searching) == null) {
+					result += decorated_list[i]+"\n";
+				} else {
+					result2 += decorated_list[i]+"\n";
+				}
+
+			}
+
+			
+			for (var i=0; i<paid_list.length;i++) {
+
+				var el = paid_list[i].replace(/^[a-zA-Zа-яА-Я\s]*/gm, '');
+				if (el.replace(/\s*/, '').length == 0) {
+					continue;
+				}
+				var searching = new RegExp('^\\s*[a-zA-Zа-яА-Я]*'+el+'\\s*$', 'gm');
+				if (decorated.match(searching) == null) {
+					result3 += paid_list[i]+"\n";
+				}
+
+			}
+
+			document.getElementById("result-list").value = result;
+			document.getElementById("result-list-2").value = result2;
+			document.getElementById("result-list-3").value = result3;
+			resize();
+		
+			
+		});
+	</script>
+</body>
+</html>
